@@ -35,6 +35,8 @@
     </ClInclude>
     <ClInclude Include="src\PEngine.h" />
     <ClInclude Include="src\pepch.h" />
+    <ClInclude Include="src\PE\Window.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PE\Application.cpp">
@@ -44,5 +46,6 @@
       <Filter>PE</Filter>
     </ClCompile>
     <ClCompile Include="src\pepch.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
 </Project>

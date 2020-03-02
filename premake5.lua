@@ -8,102 +8,115 @@ workspace "PEngine"
 		"Dist"
 	}
 
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-project "PEngine"
-	location "PEngine"
-	kind "SharedLib"
-	language "C++"
+	-- Include directories relative to root folder (solution directory)
+	IncludeDir = {}
+	IncludeDir["GLFW"] = "PEngine/vendor/GLFW/include"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	include "PEngine/vendor/GLFW"
 
-	pchheader "pepch.h"
-	pchsource "PEngine/src/pepch.cpp"
+	project "PEngine"
+		location "PEngine"
+		kind "SharedLib"
+		language "C++"
 
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
+		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+		objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	includedirs
-	{
-		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
-	}
+		pchheader "pepch.h"
+		pchsource "PEngine/src/pepch.cpp"
 
-	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
-		systemversion "latest"
-
-		defines
+		files
 		{
-			"PE_PLATFORM_WINDOWS",
-			"PE_BUILD_DLL"
+			"%{prj.name}/src/**.h",
+			"%{prj.name}/src/**.cpp"
 		}
 
-		postbuildcommands
+		includedirs
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			"%{prj.name}/src",
+			"%{prj.name}/vendor/spdlog/include",
+			"%{IncludeDir.GLFW}"
 		}
+
+		links 
+		{ 
+			"GLFW",
+			"opengl32.lib"
+		}
+
+		filter "system:windows"
+			cppdialect "C++17"
+			staticruntime "On"
+			systemversion "latest"
+
+			defines
+			{
+				"PE_PLATFORM_WINDOWS",
+				"PE_BUILD_DLL"
+			}
+
+			postbuildcommands
+			{
+				("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			}
 	
-	filter "configurations:Debug"
-		defines "PE_DEBUG"
-		symbols "On"
+		filter "configurations:Debug"
+			defines "PE_DEBUG"
+			symbols "On"
 
-	 filter "configurations:Release"
-		defines "PE_RELEASE"
-		optimize "On"
+		 filter "configurations:Release"
+			defines "PE_RELEASE"
+			optimize "On"
 
-	filter "configurations:Dist"
-		defines "PE_DIST"
-		optimize "On"
+		filter "configurations:Dist"
+			defines "PE_DIST"
+			optimize "On"
 	
-project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
+	project "Sandbox"
+		location "Sandbox"
+		kind "ConsoleApp"
+		language "C++"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+		objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
-
-	includedirs
-	{
-		"PEngine/vendor/spdlog/include",
-		"PEngine/src"
-	}
-
-	links
-	{
-		"PEngine"
-	}
-
-	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
-		systemversion "latest"
-
-		defines
+		files
 		{
-			"PE_PLATFORM_WINDOWS"
+			"%{prj.name}/src/**.h",
+			"%{prj.name}/src/**.cpp"
 		}
 
-	filter "configurations:Debug"
-		defines "PE_DEBUG"
-		symbols "On"
+		includedirs
+		{
+			"PEngine/vendor/spdlog/include",
+			"PEngine/src"
+		}
 
-	 filter "configurations:Release"
-		defines "PE_RELEASE"
-		optimize "On"
+		links
+		{
+			"PEngine"
+		}
 
-	filter "configurations:Dist"
-		defines "PE_DIST"
-		optimize "On"
+		filter "system:windows"
+			cppdialect "C++17"
+			staticruntime "On"
+			systemversion "latest"
+
+			defines
+			{
+				"PE_PLATFORM_WINDOWS"
+			}
+
+		filter "configurations:Debug"
+			defines "PE_DEBUG"
+			symbols "On"
+
+		 filter "configurations:Release"
+			defines "PE_RELEASE"
+			optimize "On"
+
+		filter "configurations:Dist"
+			defines "PE_DIST"
+			optimize "On"
