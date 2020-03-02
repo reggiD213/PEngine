@@ -2,8 +2,8 @@
 
 // exported headers for use in application
 
-#include "Core/Application.h"
-#include "Core/Log.h"
+#include "PE/Application.h"
+#include "PE/Log.h"
 
 // Entry Point
-#include "Core/EntryPoint.h"
+#include "PE/EntryPoint.h"
